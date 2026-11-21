@@ -4,7 +4,7 @@
  * and a text preview pane.
  */
 window.__ModuleLoader__.load({
-  id: 'dsh-file-manager',
+  id: '@oakzhong/dsh-file-manager',
   factory(require) {
     const React = require('react')
     const h = React.createElement
