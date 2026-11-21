@@ -1,4 +1,4 @@
 # File manager bundle: Host half serves workspace file listing/reading; dsh.client renders UI.
 - insert:
-    - id: dsh-file-manager
+    - id: @dsh-file-manager
       name: @oakzhong/dsh-file-manager
