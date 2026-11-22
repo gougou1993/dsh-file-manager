@@ -30,6 +30,7 @@ window.__ModuleLoader__.load({
       confirmOverwrite: '确定保存覆盖该文件？', newFile: '新建文件', fileName: '文件名',
       rename: '重命名', delete: '删除', confirmDelFolder: '确定删除该文件夹及其全部内容？',
       confirmDelFile: '确定删除该文件？', renameFolder: '文件夹新名称',
+      search: '搜索文件或文件夹…', showHidden: '显示隐藏文件', noMatches: '没有匹配的文件或文件夹。',
     }
     const en = {
       title: 'File manager', subtitle: 'Browse files in the current workspace and preview them.',
@@ -46,6 +47,7 @@ window.__ModuleLoader__.load({
       confirmOverwrite: 'Overwrite this file?', newFile: 'New file', fileName: 'File name',
       rename: 'Rename', delete: 'Delete', confirmDelFolder: 'Delete this folder and all its contents?',
       confirmDelFile: 'Delete this file?', renameFolder: 'New folder name',
+      search: 'Search files or folders…', showHidden: 'Show hidden', noMatches: 'No matching files or folders.',
     }
     let t = (k) => (zh[k] || k)
     const fmt = (s, v) => String(s || '').replace(/\{(\w+)\}/g, (_, k) => (v && v[k] != null ? v[k] : ''))
@@ -114,6 +116,8 @@ window.__ModuleLoader__.load({
       const [msg, setMsg] = useState('')
       const [renaming, setRenaming] = useState('')
       const [renameValue, setRenameValue] = useState('')
+      const [query, setQuery] = useState('')
+      const [showHidden, setShowHidden] = useState(false)
 
       const loadDir = useCallback(async (r, d) => {
         if (!r) { setItems([]); return }
@@ -242,6 +246,13 @@ window.__ModuleLoader__.load({
         finally { setBusy(false) }
       }, [root, selected, loadDir, dir])
 
+      const visibleItems = useMemo(() => {
+        let list = showHidden ? items : items.filter((x) => !x.name.startsWith('.'))
+        const q = query.trim().toLowerCase()
+        if (q) list = list.filter((x) => x.name.toLowerCase().indexOf(q) >= 0)
+        return list
+      }, [items, showHidden, query])
+
       const crumbs = useMemo(() => {
         const parts = dir.split('/').filter(Boolean)
         const out = [{ label: t('root'), path: '' }]
@@ -312,15 +323,25 @@ window.__ModuleLoader__.load({
             )
           )
         ),
+        h('div', { className: 'dshFm-searchBar' },
+          h('input', {
+            className: 'dshFm-input dshFm-search', type: 'search', value: query,
+            placeholder: t('search'), onChange: (e) => setQuery(e.target.value),
+          }),
+          h('label', { className: 'dshFm-check' },
+            h('input', { type: 'checkbox', checked: showHidden, onChange: (e) => setShowHidden(e.target.checked) }),
+            t('showHidden')
+          )
+        ),
         h('div', { className: 'dshFm-cols' },
           h('div', { className: 'dshFm-col dshFm-list' },
             h('div', { className: 'dshFm-listHead' },
               h('span', null, t('name')), h('span', null, t('size')), h('span', null, t('modified'))
             ),
             h('div', { className: 'dshFm-scroll' },
-              items.length === 0
-                ? h('div', { className: 'dshFm-note' }, workspaces.length ? t('emptyDir') : t('noWorkspace'))
-                : items.map((item) =>
+              visibleItems.length === 0
+                ? h('div', { className: 'dshFm-note' }, query.trim() ? t('noMatches') : (workspaces.length ? t('emptyDir') : t('noWorkspace')))
+                : visibleItems.map((item) =>
                   h('div', {
                     key: item.path,
                     className: 'dshFm-item' + (selected === item.path ? ' dshFm-itemOn' : ''),
@@ -434,8 +455,12 @@ window.__ModuleLoader__.load({
 .dshFm-editor:focus{border-color:var(--dsw-alias-brand-primary)}
 .dshFm-select{padding:6px 9px;border-radius:8px;border:1px solid var(--dsw-alias-border-l2);background:var(--dsw-alias-bg-layer-1);color:var(--dsw-alias-label-primary);font-size:12px;outline:none;font-family:inherit;max-width:220px}
 .dshFm-crumbs{display:flex;align-items:center;flex-wrap:wrap;font-size:11px;flex:0 0 auto}
-.dshFm-crumb{border:0;background:transparent;color:var(--dsw-alias-brand-primary);cursor:pointer;font-size:11px;padding:2px 3px;font-family:inherit}
+.dshFm-crumb{display:inline-flex;align-items:center;border:0;background:transparent;color:var(--dsw-alias-brand-primary);cursor:pointer;font-size:11px;padding:2px 3px;font-family:inherit}
 .dshFm-sep{color:var(--dsw-alias-label-secondary)}
+.dshFm-searchBar{display:flex;align-items:center;gap:12px;flex:0 0 auto;flex-wrap:wrap}
+.dshFm-search{flex:1 1 200px}
+.dshFm-check{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--dsw-alias-label-secondary);cursor:pointer;white-space:nowrap}
+.dshFm-check input{accent-color:var(--dsw-alias-brand-primary)}
 .dshFm-cols{display:grid;grid-template-columns:minmax(260px,1fr) minmax(0,1.1fr);gap:12px;flex:1 1 auto;min-height:0}
 .dshFm-col{display:flex;flex-direction:column;gap:8px;min-height:0;overflow:hidden}
 .dshFm-list{border:1px solid var(--dsw-alias-border-l1);border-radius:10px;background:var(--dsw-alias-bg-layer-1);padding:8px;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden}

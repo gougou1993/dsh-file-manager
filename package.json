@@ -1,6 +1,6 @@
 {
   "name": "@oakzhong/dsh-file-manager",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -18,7 +18,9 @@
     "client.js",
     "cordis.patch.yml",
     "locale/*.json",
-    "icon.svg"
+    "icon.svg",
+    "README.md",
+    "README.zh.md"
   ],
   "dsh": {
     "bundle": {
