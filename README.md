@@ -5,7 +5,7 @@ A workspace file manager plugin for DSH (DeepSeek Harness). It adds a left-sideb
 ## Plugin Info
 
 - **Package**: `@oakzhong/dsh-file-manager`
-- **Version**: 1.0.2
+- **Version**: 1.0.5
 - **Entry**: left sidebar "File Manager"
 - **Type**: Host + Client dual-half plugin (bundle)
 
