@@ -1,6 +1,6 @@
 {
   "name": "@oakzhong/dsh-file-manager",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -19,6 +19,7 @@
     "cordis.patch.yml",
     "locale/*.json",
     "icon.svg",
+    "icon.png",
     "README.md",
     "README.zh.md"
   ],
@@ -32,6 +33,15 @@
       "inject": [
         "@deepseek-ai/dsh-client-locale"
       ]
+    },
+    "compatibility": {
+      "dsh": ">=0.2.0-rc.1 <0.3.0-0"
     }
-  }
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "deepseek"
+  ]
 }
